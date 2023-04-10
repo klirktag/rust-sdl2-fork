@@ -5,6 +5,7 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::rect::Point;
 use sdl2::rect::Rect;
+use sdl2::pixels::PixelFormatEnum;
 use std::time::Duration;
 
 fn main() -> Result<(), String> {
@@ -34,11 +35,12 @@ fn main() -> Result<(), String> {
     // https://opengameart.org/content/a-platformer-in-the-forest
     let temp_surface = sdl2::surface::Surface::load_bmp(Path::new("assets/characters.bmp"))?;
     let mut temp_dragon = sdl2::surface::Surface::load_bmp(Path::new("assets/dragon.bmp"))?;
+    temp_dragon = temp_dragon.convert_format(PixelFormatEnum::RGB24).unwrap();
 
     let mut a: &mut [u8] = temp_dragon.without_lock_mut().unwrap();
     println!("length {}", a.len());
     for i in 0..a.len() {
-        if i % 3 == 2 {
+        if i % 3 == 0 {
             a[i] = 255;
         }
     }
