@@ -33,7 +33,17 @@ fn main() -> Result<(), String> {
     // animation sheet and extras are available from
     // https://opengameart.org/content/a-platformer-in-the-forest
     let temp_surface = sdl2::surface::Surface::load_bmp(Path::new("assets/characters.bmp"))?;
-    let temp_dragon = sdl2::surface::Surface::load_bmp(Path::new("assets/dragon.bmp"))?;
+    let mut temp_dragon = sdl2::surface::Surface::load_bmp(Path::new("assets/dragon.bmp"))?;
+
+    let mut a: &mut [u8] = temp_dragon.without_lock_mut().unwrap();
+    println!("length {}", a.len());
+    for i in 0..a.len() {
+        if i % 3 == 2 {
+            a[i] = 255;
+        }
+    }
+
+
     let mut texture = texture_creator
         .create_texture_from_surface(&temp_surface)
         .map_err(|e| e.to_string())?;
