@@ -3,9 +3,9 @@ use std::path::Path;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
+use sdl2::pixels::PixelFormatEnum;
 use sdl2::rect::Point;
 use sdl2::rect::Rect;
-use sdl2::pixels::PixelFormatEnum;
 use std::time::Duration;
 
 fn main() -> Result<(), String> {
@@ -38,13 +38,13 @@ fn main() -> Result<(), String> {
     temp_dragon = temp_dragon.convert_format(PixelFormatEnum::RGB24).unwrap();
 
     let mut a: &mut [u8] = temp_dragon.without_lock_mut().unwrap();
+
     println!("length {}", a.len());
     for i in 0..a.len() {
         if i % 3 == 0 {
             a[i] = 255;
         }
     }
-
 
     let mut texture = texture_creator
         .create_texture_from_surface(&temp_surface)
@@ -71,12 +71,11 @@ fn main() -> Result<(), String> {
     let mut dest_rect_2 = Rect::new(0, 64, sprite_tile_size.0 * 4, sprite_tile_size.0 * 4);
     dest_rect_2.center_on(Point::new(440, 360));
 
-    let mut dragon_source: Rect = Rect::new(0,0,200,200);
-    let mut dragon_dest: Rect = Rect::new(0,0,200,200);
-
+    let mut dragon_source: Rect = Rect::new(0, 0, 200, 200);
+    let mut dragon_dest: Rect = Rect::new(0, 0, 200, 200);
 
     let mut running = true;
-    
+
     let mut angle: f64 = 0.0;
 
     while running {
@@ -93,7 +92,7 @@ fn main() -> Result<(), String> {
                     keycode: Some(Keycode::Space),
                     ..
                 } => {
-                     angle = angle + 20.0;
+                    angle = angle + 20.0;
                 }
                 _ => {}
             }
@@ -114,13 +113,9 @@ fn main() -> Result<(), String> {
         canvas.clear();
         // copy the frame to the canvas
 
-        canvas.copy(
-            &dragon,
-            None,
-            None,
-        )?;
+        canvas.copy(&dragon, None, None)?;
 
-        texture.set_color_mod(255,100,0);
+        texture.set_color_mod(255, 100, 0);
         canvas.copy_ex(
             &texture,
             Some(source_rect_0),
@@ -130,9 +125,9 @@ fn main() -> Result<(), String> {
             false,
             false,
         )?;
-        
+
         texture.set_alpha_mod(150);
-        texture.set_color_mod(255,255,255);
+        texture.set_color_mod(255, 255, 255);
         canvas.copy_ex(
             &texture,
             Some(source_rect_1),
@@ -143,7 +138,7 @@ fn main() -> Result<(), String> {
             false,
         )?;
         texture.set_alpha_mod(255);
-        texture.set_color_mod(0,0,255);
+        texture.set_color_mod(0, 0, 255);
         canvas.copy_ex(
             &texture,
             Some(source_rect_2),
