@@ -12,7 +12,7 @@ fn main() -> Result<(), String> {
     let video_subsystem = sdl_context.video()?;
 
     let window = video_subsystem
-        .window("SDL2", 640, 480)
+        .window("SDL2", 1280, 720)
         .position_centered()
         .build()
         .map_err(|e| e.to_string())?;
@@ -33,8 +33,12 @@ fn main() -> Result<(), String> {
     // animation sheet and extras are available from
     // https://opengameart.org/content/a-platformer-in-the-forest
     let temp_surface = sdl2::surface::Surface::load_bmp(Path::new("assets/characters.bmp"))?;
-    let texture = texture_creator
+    let temp_dragon = sdl2::surface::Surface::load_bmp(Path::new("assets/dragon.bmp"))?;
+    let mut texture = texture_creator
         .create_texture_from_surface(&temp_surface)
+        .map_err(|e| e.to_string())?;
+    let dragon = texture_creator
+        .create_texture_from_surface(&temp_dragon)
         .map_err(|e| e.to_string())?;
 
     let frames_per_anim = 4;
@@ -55,7 +59,14 @@ fn main() -> Result<(), String> {
     let mut dest_rect_2 = Rect::new(0, 64, sprite_tile_size.0 * 4, sprite_tile_size.0 * 4);
     dest_rect_2.center_on(Point::new(440, 360));
 
+    let mut dragon_source: Rect = Rect::new(0,0,200,200);
+    let mut dragon_dest: Rect = Rect::new(0,0,200,200);
+
+
     let mut running = true;
+    
+    let mut angle: f64 = 0.0;
+
     while running {
         for event in event_pump.poll_iter() {
             match event {
@@ -65,6 +76,12 @@ fn main() -> Result<(), String> {
                     ..
                 } => {
                     running = false;
+                }
+                Event::KeyDown {
+                    keycode: Some(Keycode::Space),
+                    ..
+                } => {
+                     angle = angle + 20.0;
                 }
                 _ => {}
             }
@@ -84,6 +101,14 @@ fn main() -> Result<(), String> {
 
         canvas.clear();
         // copy the frame to the canvas
+
+        canvas.copy(
+            &dragon,
+            None,
+            None,
+        )?;
+
+        texture.set_color_mod(255,100,0);
         canvas.copy_ex(
             &texture,
             Some(source_rect_0),
@@ -93,20 +118,25 @@ fn main() -> Result<(), String> {
             false,
             false,
         )?;
+        
+        texture.set_alpha_mod(150);
+        texture.set_color_mod(255,255,255);
         canvas.copy_ex(
             &texture,
             Some(source_rect_1),
             Some(dest_rect_1),
-            0.0,
+            -angle,
             None,
             true,
             false,
         )?;
+        texture.set_alpha_mod(255);
+        texture.set_color_mod(0,0,255);
         canvas.copy_ex(
             &texture,
             Some(source_rect_2),
             Some(dest_rect_2),
-            0.0,
+            angle,
             None,
             false,
             false,
